@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIXORA</title>
+  <link rel="icon" type="image/png" href="fixorra_logo-removebg-preview.png">
+  <style>
+    :root {
+      --bg: #0a1022;
+      --card: #141c34;
+      --text: #eef3ff;
+      --muted: #a9b8dc;
+      --border: #2b3b67;
+      --accent: #5ea2ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 18%, #1a2a52 0%, transparent 42%),
+        radial-gradient(circle at 88% 82%, #2a1f52 0%, transparent 40%),
+        linear-gradient(145deg, #070b18 0%, #0d1530 52%, #090f22 100%);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 34px;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      position: sticky;
+      top: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .menu-btn {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: linear-gradient(145deg, #172447, #101a36);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      padding: 0 9px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .menu-btn span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 999px;
+      transition: transform 0.25s ease, opacity 0.2s ease;
+      transform-origin: center;
+    }
+
+    .menu-btn:hover {
+      border-color: #4e79d5;
+      box-shadow: 0 6px 16px rgba(20, 50, 120, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .menu-btn:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    .menu-btn.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .menu-btn.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-btn.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 8, 20, 0.45);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 15;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .menu-dropdown {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(320px, 85vw);
+      height: 100vh;
+      background: #121a32;
+      border-right: 1px solid var(--border);
+      padding: 78px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transform: translateX(-100%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: transform 0.3s ease;
+      z-index: 20;
+    }
+
+    .menu-dropdown.open {
+      transform: translateX(0);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .menu-dropdown a {
+      color: #dce6ff;
+      text-decoration: none;
+      padding: 11px 12px;
+      border-radius: 8px;
+      font-size: 0.96rem;
+    }
+
+    .menu-dropdown a:hover {
+      background: #1a2850;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      display: block;
+      filter: brightness(0) invert(1) opacity(0.9);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .nav-main {
+      color: #ffffff;
+    }
+
+    nav a:hover {
+      color: var(--accent);
+    }
+
+    nav a:active {
+      transform: scale(0.98);
+      opacity: 0.88;
+    }
+
+    .icon-link {
+      font-size: 1.2rem;
+    }
+
+    .icon-btn {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      color: var(--accent);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+      opacity: 0.9;
+    }
+
+    .notification-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 8, 20, 0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 24;
+    }
+
+    .notification-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .notification-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: min(420px, 92vw);
+      background: #121a32;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      z-index: 30;
+      transform: translate(-50%, -45%) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+
+    .notification-panel.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .notification-header {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .notification-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 9px;
+      background: #101935;
+    }
+
+    .notification-item p {
+      font-size: 0.88rem;
+      line-height: 1.35;
+      color: #dce6ff;
+    }
+
+    .notification-item span {
+      display: block;
+      font-size: 0.76rem;
+      margin-top: 4px;
+      color: var(--muted);
+    }
+
+    .notification-empty {
+      color: var(--muted);
+      font-size: 0.86rem;
+      text-align: center;
+      padding: 10px;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+    }
+
+    .notification-footer {
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .notification-footer a {
+      color: #bcd4ff;
+      text-decoration: none;
+      font-size: 0.84rem;
+    }
+
+    .notification-footer a:hover {
+      color: #ffffff;
+    }
+
+    .feedback-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 8, 20, 0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 34;
+    }
+
+    .feedback-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .feedback-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: min(440px, 92vw);
+      background: #121a32;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      z-index: 35;
+      transform: translate(-50%, -45%) scale(0.96);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+
+    .feedback-panel.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .feedback-header {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feedback-textarea {
+      width: 100%;
+      min-height: 130px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #101935;
+      color: var(--text);
+      padding: 10px 11px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .feedback-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(94, 162, 255, 0.2);
+    }
+
+    .feedback-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .feedback-btn {
+      border: 1px solid var(--border);
+      background: #182447;
+      color: #e7eeff;
+      border-radius: 9px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .feedback-btn.primary {
+      border: none;
+      background: linear-gradient(145deg, #6cb1ff, #7a7dff);
+      color: #fff;
+    }
+
+    .feedback-status {
+      margin-top: 8px;
+      font-size: 0.84rem;
+      color: #9fd5ff;
+      min-height: 1em;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .input-area {
+      width: min(760px, 100%);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+    }
+
+    .input-area h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      color: #f3f5f8;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 18px;
+      font-size: 0.95rem;
+    }
+
+    .textbox-wrap {
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 52px 16px 16px;
+      font-size: 1rem;
+      color: var(--text);
+      outline: none;
+      background: #101935;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(138, 160, 184, 0.25);
+    }
+
+    .mic-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .mic-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .mic-btn:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .helper-text {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .status-text {
+      margin-top: 10px;
+      color: #9fd5ff;
+      font-size: 0.85rem;
+      min-height: 1em;
+    }
+
+    .submit-btn {
+      border: none;
+      background: linear-gradient(145deg, #6cb1ff, #7a7dff);
+      color: #fff;
+      font-weight: 600;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0) scale(0.97);
+      filter: brightness(0.95);
+    }
+
+    .mic-btn:active {
+      transform: scale(0.92);
+      filter: brightness(0.92);
+    }
+
+    .menu-dropdown a:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 14px 12px 22px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <button id="menuButton" class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <a class="brand" href="index.html" aria-label="Go to home page">
+        <img class="brand-logo" src="fixorra_logo-removebg-preview.png" alt="FIXORA logo">
+        <span>FIXORA</span>
+      </a>
+    </div>
+    <nav>
+      <a href="developer.html" class="nav-main">DEVELOPER</a>
+      <button id="notificationButton" class="icon-btn" type="button" aria-label="Notifications" aria-expanded="false">🔔</button>
+      <a href="#" class="icon-link" aria-label="Profile">👤</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="input-area">
+      <h1>What problem are you facing?</h1>
+      <p class="subtitle">Share your problem and get practical solutions from the FIXORA community.</p>
+      <div class="textbox-wrap">
+        <textarea id="problemText" placeholder="Describe your problem in detail so the community can help..."></textarea>
+        <button class="mic-btn" aria-label="Microphone">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15a3 3 0 0 0 3-3V7a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3Zm5-3a1 1 0 1 1 2 0 7 7 0 0 1-6 6.92V21h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2.08A7 7 0 0 1 5 12a1 1 0 1 1 2 0 5 5 0 0 0 10 0Z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="action-row">
+        <p class="helper-text">Tip: include context, what you already tried, and your goal.</p>
+        <button id="postButton" class="submit-btn" type="button">Post to Community</button>
+      </div>
+      <p id="postStatus" class="status-text"></p>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 FIXORA. All rights reserved.
+  </footer>
+  <div id="notificationOverlay" class="notification-overlay"></div>
+  <section id="notificationPanel" class="notification-panel" aria-label="Notifications panel">
+    <h3 class="notification-header">Notifications</h3>
+    <ul id="notificationList" class="notification-list"></ul>
+    <div class="notification-footer">
+      <a href="notification.html">View all notifications</a>
+    </div>
+  </section>
+  <div id="menuOverlay" class="menu-overlay"></div>
+  <nav id="menuDropdown" class="menu-dropdown" aria-label="Quick menu">
+    <a href="index.html">Home</a>
+    <a href="developer.html">Developer</a>
+    <a href="#" id="menuNotificationsLink">Notifications</a>
+    <a href="#" id="menuFeedbackLink">Feedback</a>
+    <a href="#">Profile</a>
+  </nav>
+  <div id="feedbackOverlay" class="feedback-overlay"></div>
+  <section id="feedbackPanel" class="feedback-panel" aria-label="Feedback popup">
+    <h3 class="feedback-header">Send Feedback</h3>
+    <textarea id="feedbackText" class="feedback-textarea" placeholder="Write your feedback here..."></textarea>
+    <div class="feedback-actions">
+      <button id="feedbackCloseBtn" class="feedback-btn" type="button">Close</button>
+      <button id="feedbackSubmitBtn" class="feedback-btn primary" type="button">Submit</button>
+    </div>
+    <p id="feedbackStatus" class="feedback-status"></p>
+  </section>
+  <script type="module" src="db.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIXORA Developer Page</title>
+  <link rel="icon" type="image/png" href="fixorra_logo-removebg-preview.png">
+  <style>
+    :root {
+      --bg: #0a1022;
+      --card: #141c34;
+      --text: #eef3ff;
+      --muted: #a9b8dc;
+      --border: #2b3b67;
+      --accent: #5ea2ff;
+      --success: #24c07a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 18%, #1a2a52 0%, transparent 42%),
+        radial-gradient(circle at 88% 82%, #2a1f52 0%, transparent 40%),
+        linear-gradient(145deg, #070b18 0%, #0d1530 52%, #090f22 100%);
+      color: var(--text);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 34px;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      position: sticky;
+      top: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      filter: brightness(0) invert(1) opacity(0.9);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .icon-link {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 1.2rem;
+      transition: color 0.2s ease;
+    }
+
+    .icon-link:hover {
+      color: var(--accent);
+    }
+
+    .page-wrap {
+      width: min(1080px, 94%);
+      margin: 28px auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: 1.9rem;
+      font-weight: 700;
+    }
+
+    .stat-value.success {
+      color: var(--success);
+    }
+
+    .controls {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 220px;
+      gap: 12px;
+    }
+
+    .input,
+    .select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #101935;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .input:focus,
+    .select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(94, 162, 255, 0.2);
+    }
+
+    .problems-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .panel-title {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+
+    .problem-list {
+      display: grid;
+      gap: 10px;
+      list-style: none;
+    }
+
+    .problem-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      background: #111a31;
+    }
+
+    .problem-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: baseline;
+    }
+
+    .problem-title {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .category-tag {
+      border: 1px solid #3d548f;
+      color: #dce8ff;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .problem-meta {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 7px;
+    }
+
+    .problem-desc {
+      color: #d9e4ff;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      .stats-grid,
+      .controls {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <img class="brand-logo" src="fixorra_logo-removebg-preview.png" alt="FIXORA logo">
+      <span>FIXORA - Developer</span>
+    </div>
+    <nav class="top-actions">
+      <a href="notification.html" class="icon-link" aria-label="Notifications">🔔</a>
+      <a href="#" class="icon-link" aria-label="Profile">👤</a>
+    </nav>
+  </header>
+
+  <main class="page-wrap">
+    <section class="stats-grid">
+      <article class="stat-card">
+        <p class="stat-label">Total Problems</p>
+        <p id="totalProblems" class="stat-value">0</p>
+      </article>
+      <article class="stat-card">
+        <p class="stat-label">Problems Solved By You</p>
+        <p id="solvedByYou" class="stat-value success">0</p>
+      </article>
+    </section>
+
+    <section class="controls">
+      <input id="searchInput" class="input" type="text" placeholder="Search problems by title or description">
+      <select id="categoryFilter" class="select" aria-label="Filter by category">
+        <option value="all">All Categories</option>
+        <option value="tech">Tech</option>
+        <option value="civic">Civic</option>
+        <option value="everyday">Everyday</option>
+      </select>
+    </section>
+
+    <section class="problems-panel">
+      <h2 class="panel-title">Reported Problems</h2>
+      <ul id="problemList" class="problem-list"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="db.js"></script>
+  <script type="module" src="developer.js"></script>
+</body>
+</html>
